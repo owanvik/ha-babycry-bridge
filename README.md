@@ -26,7 +26,8 @@ Add integration from UI and provide:
 - Password
 - Cloud password (optional, some camera auth setups need it)
 - Poll seconds (default 8)
-- Hold seconds (default 90)
+- Hold seconds (default 30)
+- Trigger delay seconds (default 0 = immediate)
 - Alarm types (comma-separated, default `7`)
 
 ## Notes

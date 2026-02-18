@@ -25,6 +25,7 @@ async def async_setup_entry(
 class BabyCryBinarySensor(CoordinatorEntity[BabyCryCoordinator], BinarySensorEntity):
     _attr_device_class = BinarySensorDeviceClass.SOUND
     _attr_has_entity_name = True
+    _attr_icon = "mdi:emoticon-cry-outline"
 
     def __init__(self, coordinator: BabyCryCoordinator, entry: ConfigEntry) -> None:
         super().__init__(coordinator)
@@ -45,4 +46,6 @@ class BabyCryBinarySensor(CoordinatorEntity[BabyCryCoordinator], BinarySensorEnt
             "cry_events_in_window": data.cry_events_in_window,
             "last_checked": data.last_checked.isoformat(),
             "last_triggered": data.last_triggered.isoformat() if data.last_triggered else None,
+            "hold_seconds": self.coordinator._hold_seconds,
+            "trigger_delay_seconds": self.coordinator._trigger_delay_seconds,
         }

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="BabyCry Bridge icon">
+  <rect width="256" height="256" rx="48" fill="#0f172a"/>
+  <circle cx="128" cy="106" r="62" fill="#f8fafc"/>
+  <circle cx="106" cy="96" r="8" fill="#0f172a"/>
+  <circle cx="150" cy="96" r="8" fill="#0f172a"/>
+  <path d="M96 132c10 18 54 18 64 0" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M92 126c-10 8-12 18-12 30" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M164 126c10 8 12 18 12 30" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="80" cy="164" r="8" fill="#38bdf8"/>
+  <circle cx="176" cy="164" r="8" fill="#38bdf8"/>
+  <path d="M56 210h144" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+</svg>

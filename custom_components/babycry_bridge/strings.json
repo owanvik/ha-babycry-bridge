@@ -10,6 +10,7 @@
           "cloud_password": "Cloud password (optional)",
           "poll_seconds": "Poll interval (seconds)",
           "hold_seconds": "Keep sensor ON for (seconds)",
+          "trigger_delay_seconds": "Trigger delay (seconds)",
           "alarm_types": "Alarm types (comma-separated)"
         }
       }
@@ -29,6 +30,7 @@
           "cloud_password": "Cloud password (optional)",
           "poll_seconds": "Poll interval (seconds)",
           "hold_seconds": "Keep sensor ON for (seconds)",
+          "trigger_delay_seconds": "Trigger delay (seconds)",
           "alarm_types": "Alarm types (comma-separated)"
         }
       }

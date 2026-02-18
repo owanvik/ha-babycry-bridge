@@ -11,9 +11,11 @@ from .const import (
     CONF_CLOUD_PASSWORD,
     CONF_HOLD_SECONDS,
     CONF_POLL_SECONDS,
+    CONF_TRIGGER_DELAY_SECONDS,
     DEFAULT_ALARM_TYPES,
     DEFAULT_HOLD_SECONDS,
     DEFAULT_POLL_SECONDS,
+    DEFAULT_TRIGGER_DELAY_SECONDS,
     DOMAIN,
 )
 
@@ -33,6 +35,10 @@ def _schema(data: dict | None = None) -> vol.Schema:
             ): vol.Coerce(int),
             vol.Optional(
                 CONF_HOLD_SECONDS, default=data.get(CONF_HOLD_SECONDS, DEFAULT_HOLD_SECONDS)
+            ): vol.Coerce(int),
+            vol.Optional(
+                CONF_TRIGGER_DELAY_SECONDS,
+                default=data.get(CONF_TRIGGER_DELAY_SECONDS, DEFAULT_TRIGGER_DELAY_SECONDS),
             ): vol.Coerce(int),
             vol.Optional(
                 CONF_ALARM_TYPES, default=data.get(CONF_ALARM_TYPES, DEFAULT_ALARM_TYPES)

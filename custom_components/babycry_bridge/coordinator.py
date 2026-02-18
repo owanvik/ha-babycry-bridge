@@ -17,9 +17,11 @@ from .const import (
     CONF_CLOUD_PASSWORD,
     CONF_HOLD_SECONDS,
     CONF_POLL_SECONDS,
+    CONF_TRIGGER_DELAY_SECONDS,
     DEFAULT_ALARM_TYPES,
     DEFAULT_HOLD_SECONDS,
     DEFAULT_POLL_SECONDS,
+    DEFAULT_TRIGGER_DELAY_SECONDS,
     DOMAIN,
 )
 
@@ -48,6 +50,9 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
         self._cloud_password = cfg.get(CONF_CLOUD_PASSWORD, "")
         self._poll_seconds = int(cfg.get(CONF_POLL_SECONDS, DEFAULT_POLL_SECONDS))
         self._hold_seconds = int(cfg.get(CONF_HOLD_SECONDS, DEFAULT_HOLD_SECONDS))
+        self._trigger_delay_seconds = int(
+            cfg.get(CONF_TRIGGER_DELAY_SECONDS, DEFAULT_TRIGGER_DELAY_SECONDS)
+        )
         self._alarm_types = {
             int(x.strip())
             for x in str(cfg.get(CONF_ALARM_TYPES, DEFAULT_ALARM_TYPES)).split(",")
@@ -59,6 +64,7 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
         self._cam: Tapo | None = None
         self._last_checked = int(time.time()) - 20
         self._last_on_at = 0
+        self._pending_since = 0
 
         super().__init__(
             hass,
@@ -87,7 +93,12 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
             cry_events = [e for e in events if e.get("alarm_type") in self._alarm_types]
 
             if cry_events:
-                self._last_on_at = now
+                if self._pending_since == 0:
+                    self._pending_since = now
+                if (now - self._pending_since) >= self._trigger_delay_seconds:
+                    self._last_on_at = now
+            else:
+                self._pending_since = 0
 
             is_on = (now - self._last_on_at) <= self._hold_seconds
             self._last_checked = now
