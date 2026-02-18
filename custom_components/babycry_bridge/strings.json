@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "BabyCry Bridge (Tapo)",
+        "data": {
+          "host": "Camera IP",
+          "username": "Username",
+          "password": "Password",
+          "cloud_password": "Cloud password (optional)",
+          "poll_seconds": "Poll interval (seconds)",
+          "hold_seconds": "Keep sensor ON for (seconds)",
+          "alarm_types": "Alarm types (comma-separated)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to camera"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "BabyCry Bridge options",
+        "data": {
+          "host": "Camera IP",
+          "username": "Username",
+          "password": "Password",
+          "cloud_password": "Cloud password (optional)",
+          "poll_seconds": "Poll interval (seconds)",
+          "hold_seconds": "Keep sensor ON for (seconds)",
+          "alarm_types": "Alarm types (comma-separated)"
+        }
+      }
+    }
+  }
+}

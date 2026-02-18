@@ -1,0 +1,12 @@
+{
+  "domain": "babycry_bridge",
+  "name": "BabyCry Bridge (Tapo)",
+  "version": "0.1.0",
+  "documentation": "https://github.com/owanvik/ha-babycry-bridge",
+  "issue_tracker": "https://github.com/owanvik/ha-babycry-bridge/issues",
+  "config_flow": true,
+  "codeowners": ["@owanvik"],
+  "requirements": ["pytapo>=3.3.40"],
+  "iot_class": "local_polling",
+  "loggers": ["pytapo"]
+}
