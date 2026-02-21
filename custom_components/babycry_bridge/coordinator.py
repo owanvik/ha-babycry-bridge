@@ -115,6 +115,28 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
         }
         await self.hass.async_add_executor_job(self._append_event_log, payload)
 
+    def _read_recent_logs_sync(self, lines: int) -> list[dict]:
+        if not self._event_log_path.exists():
+            return []
+
+        with self._event_log_path.open("r", encoding="utf-8") as handle:
+            selected = handle.readlines()[-lines:]
+
+        out: list[dict] = []
+        for line in selected:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                out.append(json.loads(line))
+            except json.JSONDecodeError:
+                out.append({"parse_error": True, "raw": line})
+        return out
+
+    async def async_get_recent_logs(self, lines: int = 100) -> list[dict]:
+        safe_lines = max(1, min(lines, 1000))
+        return await self.hass.async_add_executor_job(self._read_recent_logs_sync, safe_lines)
+
     async def _async_update_data(self) -> BabyCryData:
         try:
             cam = await self._ensure_cam()

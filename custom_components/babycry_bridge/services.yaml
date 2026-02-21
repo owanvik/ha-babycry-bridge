@@ -1,0 +1,14 @@
+get_recent_logs:
+  name: Get recent babycry logs
+  description: Return recent JSON log records written by the integration.
+  fields:
+    lines:
+      name: Number of lines
+      description: Number of latest JSONL records to return (1-1000).
+      required: false
+      default: 200
+      selector:
+        number:
+          min: 1
+          max: 1000
+          mode: box

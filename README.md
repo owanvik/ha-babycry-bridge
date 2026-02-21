@@ -36,3 +36,18 @@ Add integration from UI and provide:
 - Alarm type mapping may vary by camera firmware/model.
 - Start with `7` (observed on C200 setup) and adjust if needed.
 - Event log rotates at ~10 MB (`babycry_bridge_events.jsonl.1` keeps previous file).
+
+## Debug service (for tuning)
+
+Service: `babycry_bridge.get_recent_logs` (response-only)
+
+Example (HA API):
+
+```bash
+curl -X POST "$HA_URL/api/services/babycry_bridge/get_recent_logs?return_response" \
+  -H "Authorization: Bearer $HA_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lines": 200}'
+```
+
+This returns latest JSON log records so you can inspect lag/false positives without direct filesystem access.
