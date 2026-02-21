@@ -8,6 +8,7 @@ Custom Home Assistant integration that polls a Tapo camera directly and exposes 
 - Polls recent events and maps configured alarm types to baby-cry
 - Exposes one entity: `binary_sensor.barnerom_baby_cry_direct` (entity name: **Barnerom Baby Cry (Direct)**)
 - Configurable poll interval, on-hold duration, and alarm types
+- Writes every poll (raw camera events + metadata) to `config/babycry_bridge_events.jsonl` for debugging/tuning
 
 ## Install (HACS custom repository)
 
@@ -34,3 +35,4 @@ Add integration from UI and provide:
 
 - Alarm type mapping may vary by camera firmware/model.
 - Start with `7` (observed on C200 setup) and adjust if needed.
+- Event log rotates at ~10 MB (`babycry_bridge_events.jsonl.1` keeps previous file).

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+import json
 import logging
+from pathlib import Path
 import time
 
 from pytapo import Tapo
@@ -27,6 +29,9 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+EVENT_LOG_FILENAME = "babycry_bridge_events.jsonl"
+EVENT_LOG_MAX_BYTES = 10 * 1024 * 1024
+
 
 @dataclass
 class BabyCryData:
@@ -36,6 +41,7 @@ class BabyCryData:
     cry_events_in_window: int
     last_checked: datetime
     last_triggered: datetime | None
+    event_log_path: str
 
 
 class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
@@ -65,6 +71,7 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
         self._last_checked = int(time.time()) - 20
         self._last_on_at = 0
         self._pending_since = 0
+        self._event_log_path = Path(self.hass.config.path(EVENT_LOG_FILENAME))
 
         super().__init__(
             hass,
@@ -81,6 +88,33 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
             self._cam = await self.hass.async_add_executor_job(self._build_cam)
         return self._cam
 
+    def _append_event_log(self, payload: dict) -> None:
+        self._event_log_path.parent.mkdir(parents=True, exist_ok=True)
+        if self._event_log_path.exists() and self._event_log_path.stat().st_size >= EVENT_LOG_MAX_BYTES:
+            rotated = self._event_log_path.with_suffix(".jsonl.1")
+            try:
+                if rotated.exists():
+                    rotated.unlink()
+                self._event_log_path.rename(rotated)
+            except OSError as err:
+                _LOGGER.warning("Failed to rotate babycry event log: %s", err)
+
+        with self._event_log_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+    async def _log_poll(self, now: int, window_start: int, events: list[dict], cry_events: list[dict]) -> None:
+        payload = {
+            "logged_at": datetime.now(timezone.utc).isoformat(),
+            "camera_host": self._host,
+            "window_start": window_start,
+            "window_end": now,
+            "event_count": len(events),
+            "cry_event_count": len(cry_events),
+            "alarm_types": sorted(self._alarm_types),
+            "events": events,
+        }
+        await self.hass.async_add_executor_job(self._append_event_log, payload)
+
     async def _async_update_data(self) -> BabyCryData:
         try:
             cam = await self._ensure_cam()
@@ -91,6 +125,7 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
             events = events or []
             alarm_types_seen = [e.get("alarm_type") for e in events if "alarm_type" in e]
             cry_events = [e for e in events if e.get("alarm_type") in self._alarm_types]
+            await self._log_poll(now, window_start, events, cry_events)
 
             if cry_events:
                 if self._pending_since == 0:
@@ -116,6 +151,7 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
                 cry_events_in_window=len(cry_events),
                 last_checked=datetime.now(timezone.utc),
                 last_triggered=last_triggered,
+                event_log_path=str(self._event_log_path),
             )
         except Exception as err:
             self._cam = None

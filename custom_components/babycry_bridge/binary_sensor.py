@@ -46,6 +46,7 @@ class BabyCryBinarySensor(CoordinatorEntity[BabyCryCoordinator], BinarySensorEnt
             "cry_events_in_window": data.cry_events_in_window,
             "last_checked": data.last_checked.isoformat(),
             "last_triggered": data.last_triggered.isoformat() if data.last_triggered else None,
+            "event_log_path": data.event_log_path,
             "hold_seconds": self.coordinator._hold_seconds,
             "trigger_delay_seconds": self.coordinator._trigger_delay_seconds,
         }
