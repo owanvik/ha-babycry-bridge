@@ -100,7 +100,7 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
                 _LOGGER.warning("Failed to rotate babycry event log: %s", err)
 
         with self._event_log_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            handle.write(json.dumps(payload, ensure_ascii=False, default=str) + "\n")
 
     async def _log_poll(self, now: int, window_start: int, events: list[dict], cry_events: list[dict]) -> None:
         payload = {
@@ -125,7 +125,10 @@ class BabyCryCoordinator(DataUpdateCoordinator[BabyCryData]):
             events = events or []
             alarm_types_seen = [e.get("alarm_type") for e in events if "alarm_type" in e]
             cry_events = [e for e in events if e.get("alarm_type") in self._alarm_types]
-            await self._log_poll(now, window_start, events, cry_events)
+            try:
+                await self._log_poll(now, window_start, events, cry_events)
+            except Exception as log_err:  # pragma: no cover - defensive logging
+                _LOGGER.warning("Failed writing babycry event log: %s", log_err)
 
             if cry_events:
                 if self._pending_since == 0:
